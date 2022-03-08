@@ -8,18 +8,57 @@ const Page: React.FC<{ title: string }> = ({ title }) => (
   </div>
 );
 
+const routes = [
+  {
+    path: '/',
+    Component: Page,
+    accountTypeRequired: [],
+    permissions: null,
+    routes: null,
+  },
+  {
+    path: 'page2',
+    Component: Page,
+    accountTypeRequired: [],
+    permissions: null,
+    routes: null,
+  },
+  {
+    path: 'page3',
+    Component: Page,
+    accountTypeRequired: [],
+    permissions: null,
+    routes: [
+      {
+        path: 'subpage',
+        Component: Page,
+        accountTypeRequired: [],
+        permissions: null,
+        routes: null,
+      },
+    ],
+  },
+];
+
 function App() {
+  const render = (routeList: any) => {
+    return routeList.map((route: any) => {
+      if (route.routes)
+        return (
+          <Route path={route.path}>
+            {route.Component && <Route path="" element={<route.Component title={route.path} />} />}
+            {render(route.routes)}
+          </Route>
+        );
+
+      return <Route path={route.path} element={<route.Component title={route.path} />} />;
+    });
+  };
+
   return (
     <div className="App">
       <BrowserRouter>
-        <Routes>
-          <Route index element={<Page title="Home Page" />} />
-          <Route path="page2" element={<Page title="Page 2" />} />
-          <Route path="page3">
-            <Route path="" element={<Page title="SubPage" />} />
-            <Route path="subpage1" element={<Page title="Subpage1"></Page>} />
-          </Route>
-        </Routes>
+        <Routes>{render(routes)}</Routes>
       </BrowserRouter>
     </div>
   );
